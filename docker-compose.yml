@@ -1,0 +1,40 @@
+version: '3.4'
+
+services:
+    
+  pg-db:
+    container_name: pg-db
+    image: postgres:11-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - pg-db:/var/lib/postgres/data
+    networks:
+      - voting-system
+    restart: always
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - voting-system
+
+  redis-cli:
+    depends_on:
+      - redis
+    image: redis
+    networks:
+      - voting-system
+    command: redis-cli -h 127.0.0.1 ping
+
+networks:
+  voting-system:
+    driver: bridge
+
+volumes:
+    pg-db:
