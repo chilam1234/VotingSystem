@@ -7,7 +7,7 @@ export class SignupInput implements Partial<User> {
   userName: string;
 
   @Field()
-  email: string;
+  hkId: string;
 
   @Field()
   password: string;

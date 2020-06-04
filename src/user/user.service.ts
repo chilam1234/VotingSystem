@@ -17,15 +17,19 @@ export class UserService {
   ) {}
 
   async signup(signupInput: SignupInput): Promise<ErrorResponse[] | null> {
-    const userExit = await this.userRepo.findOne({
-      where: { email: signupInput.email },
+    const exist = await this.userRepo.findOne({
+      where: { hkId: signupInput.hkId },
     });
-    console.log(userExit, 'userExist');
 
-    if (userExit) {
-      return errorMessage('email', 'invalid email or password');
+    const exist2 = await this.userRepo.findOne({
+      where: { userName: signupInput.userName },
+    });
+
+    if (exist || exist2) {
+      return errorMessage('hkId', 'duplicated username or HKID');
     }
-    const user = await this.userRepo.save({ ...signupInput });
+
+    await this.userRepo.save({ ...signupInput });
     return null;
   }
 
@@ -34,7 +38,7 @@ export class UserService {
     req: Request,
   ): Promise<ErrorResponse[] | null> {
     const user = await this.userRepo.findOne({
-      where: { email: loginInput.email },
+      where: { userName: loginInput.username },
     });
     if (!user) {
       return errorMessage('username', 'invalid username or password');

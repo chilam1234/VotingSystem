@@ -4,7 +4,7 @@ import { User } from '../user.entity';
 @InputType({ description: 'Login Input' })
 export class LoginInput implements Partial<User> {
   @Field()
-  email: string;
+  username : string;
 
   @Field()
   password: string;
