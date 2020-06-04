@@ -11,9 +11,9 @@ export class Vote {
 
   @Field(()=> PollOption)
   @ManyToOne(() => PollOption, PollOption => PollOption.votes)
-  pollOption: Promise<PollOption>;
+  pollOption: PollOption;
 
   @Field(()=>User)
   @OneToOne(() => User)
-  user: Promise<User>;
+  user: User;
 }

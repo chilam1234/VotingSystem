@@ -52,10 +52,10 @@ export class PollResolver {
   @Mutation(() => Boolean)
   @UseGuards(AuthGuard)
   async deletePoll(
-    @Context() ctx: MyContext,
+    @GetUserId() userId: string,
     @Args('id') id: number,
   ): Promise<Boolean> {
-    return this.pollService.deletePoll(ctx, id);
+    return this.pollService.deletePoll(userId, id);
   }
 
   @Query(() => [Poll])

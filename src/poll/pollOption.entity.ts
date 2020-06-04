@@ -15,7 +15,7 @@ export class PollOption {
 
   @Field(() => [Vote])
   @OneToMany(() => Vote, vote => vote.pollOption)
-  votes: Promise<Vote[]>;
+  votes: Vote[];
 
   @Field()
   @Column()

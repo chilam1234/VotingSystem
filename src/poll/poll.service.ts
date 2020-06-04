@@ -21,6 +21,7 @@ export class PollService {
     @InjectRepository(Vote)
     private readonly voteRepo: VoteRepository,
   ) {}
+
   async createPoll(
     userId: string,
     name: string,
@@ -42,7 +43,7 @@ export class PollService {
     options.map(async text => {
       await this.pollOptionRepo.insert({
         text,
-        votes: ,
+        votes: [],
         pollId: poll.raw[0].id,
       });
     });
@@ -74,9 +75,11 @@ export class PollService {
       return false;
     }
 
-    await this.pollOptionRepo.update(
-      { id: pollOptionId },
-      { votes: pollOption.votes + 1 },
+    await this.voteRepo.insert(
+      { 
+        user: () => userId,
+        pollOption: pollOption 
+      }
     );
 
     await redis.sadd(`${POLL_OPTION_ID_PREFIX}${pollOption.pollId}`, userId);
@@ -100,13 +103,11 @@ export class PollService {
       .getMany();
   }
 
-  async deletePoll(ctx: MyContext, id: number): Promise<Boolean> {
+  async deletePoll(userId: string, id: number): Promise<Boolean> {
     try {
       await this.pollRepo.delete({ id });
-      const ip =
-        ctx.req.header('x-forwarded-for') || ctx.req.connection.remoteAddress;
 
-      await redis.srem(`${POLL_OPTION_ID_PREFIX}${id}`, ip);
+      await redis.srem(`${POLL_OPTION_ID_PREFIX}${id}`, userId);
     } catch (err) {
       return false;
     }
